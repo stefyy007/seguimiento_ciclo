@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#FFF9FB" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Mi Ciclo" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Mi Ciclo</title>
+</head>
+<body>
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mark">◌</div>
+      <h1>Mi Ciclo</h1>
+      <p id="authSubtitle">Tus datos permanecen cifrados en este dispositivo.</p>
+
+      <div id="setupBox" class="hidden">
+        <label for="setupPin">Crea un PIN de 6 dígitos</label>
+        <input id="setupPin" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="••••••" />
+        <label for="setupPin2">Repite el PIN</label>
+        <input id="setupPin2" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="••••••" />
+        <button id="createPinBtn" class="primary-btn">Crear PIN</button>
+      </div>
+
+      <div id="unlockBox" class="hidden">
+        <label for="unlockPin">PIN</label>
+        <input id="unlockPin" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••" />
+        <button id="unlockBtn" class="primary-btn">Desbloquear</button>
+        <button id="showRecoveryBtn" class="link-btn">Usar clave de recuperación</button>
+      </div>
+
+      <div id="recoveryUnlockBox" class="hidden">
+        <label for="recoveryInput">Clave de recuperación</label>
+        <textarea id="recoveryInput" rows="3" placeholder="Pega aquí tu clave"></textarea>
+        <button id="recoveryUnlockBtn" class="primary-btn">Desbloquear con clave</button>
+        <button id="backToPinBtn" class="link-btn">Volver al PIN</button>
+      </div>
+      <p id="authError" class="error-text"></p>
+    </div>
+  </div>
+
+  <div id="recoveryModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>Guarda tu clave de recuperación</h2>
+      <p>Es la única forma de recuperar tus datos si olvidas el PIN. Guárdala fuera de esta app.</p>
+      <div id="recoveryKeyDisplay" class="recovery-key"></div>
+      <button id="copyRecoveryBtn" class="secondary-btn">Copiar clave</button>
+      <button id="confirmRecoveryBtn" class="primary-btn">Ya la guardé</button>
+    </div>
+  </div>
+
+  <div id="appShell" class="app-shell hidden">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SEGUIMIENTO PERSONAL</p>
+        <h1>Mi Ciclo</h1>
+      </div>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙︎</button>
+    </header>
+
+    <main>
+      <section id="pageRegistro" class="page active">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">REGISTRO</p>
+            <h2>¿Cómo estuvo tu día?</h2>
+          </div>
+          <button id="todayBtn" class="chip-btn">Hoy</button>
+        </div>
+
+        <form id="entryForm" class="card form-card">
+          <label for="entryDate">Fecha</label>
+          <input type="date" id="entryDate" required />
+
+          <div class="subsection">
+            <div class="subsection-title-row">
+              <h3>Menstruación</h3>
+              <label class="switch-row"><input id="hasPeriod" type="checkbox" /> <span>Hubo menstruación</span></label>
+            </div>
+            <div id="periodFields" class="conditional disabled-block">
+              <label>Flujo</label>
+              <div class="segmented" data-target="flow">
+                <button type="button" data-value="bajo">Bajo</button>
+                <button type="button" data-value="medio">Medio</button>
+                <button type="button" data-value="alto">Alto</button>
+              </div>
+              <label>Cólicos</label>
+              <div class="segmented" data-target="cramps">
+                <button type="button" data-value="leves">Leves</button>
+                <button type="button" data-value="fuertes">Fuertes</button>
+              </div>
+              <label>Objetos</label>
+              <div class="check-grid">
+                <label><input type="checkbox" name="products" value="copa" /> Copa</label>
+                <label><input type="checkbox" name="products" value="tampones" /> Tampones</label>
+                <label><input type="checkbox" name="products" value="toallas" /> Toallas</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="subsection">
+            <h3>Actividad sexual</h3>
+            <label>Sexo</label>
+            <div class="segmented" data-target="sex">
+              <button type="button" data-value="ninguno" class="selected">Sin registro</button>
+              <button type="button" data-value="con protección">Con protección</button>
+              <button type="button" data-value="sin protección">Sin protección</button>
+            </div>
+            <div id="contraceptiveWrap" class="conditional disabled-block compact-top">
+              <label>Anticonceptivos</label>
+              <div class="segmented" data-target="contraceptive">
+                <button type="button" data-value="si">Sí</button>
+                <button type="button" data-value="no">No</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="subsection">
+            <h3>Otros</h3>
+            <label for="notes">Notas</label>
+            <textarea id="notes" rows="4" placeholder="Síntomas, ánimo, observaciones..."></textarea>
+          </div>
+
+          <button class="primary-btn" type="submit">Guardar registro</button>
+          <p id="saveMessage" class="success-text"></p>
+        </form>
+
+        <div class="card recent-card">
+          <div class="card-title-row">
+            <h3>Registros recientes</h3>
+            <span id="recordCount" class="muted"></span>
+          </div>
+          <div id="recentEntries" class="entry-list"></div>
+        </div>
+      </section>
+
+      <section id="pageCiclo" class="page">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">VISUAL DEL CICLO</p>
+            <h2>Tu ciclo actual</h2>
+          </div>
+        </div>
+
+        <div class="card wheel-card">
+          <div id="cycleSummary" class="cycle-summary"></div>
+          <div id="cycleWheelWrap" class="wheel-wrap">
+            <svg id="cycleWheel" viewBox="0 0 360 360" aria-label="Rueda del ciclo"></svg>
+            <div id="wheelCenter" class="wheel-center"></div>
+          </div>
+          <div class="legend phase-legend">
+            <span><i class="dot menstrual"></i> Menstrual</span>
+            <span><i class="dot fertile"></i> Fértil / ovulatoria estimada</span>
+            <span><i class="dot luteal"></i> Lútea</span>
+            <span><i class="dot follicular"></i> Folicular</span>
+            <span><i class="dot sexdot"></i> Actividad sexual</span>
+          </div>
+          <p class="notice">Las fases y días fértiles son estimaciones basadas en tus registros y configuración. No deben usarse como método anticonceptivo.</p>
+        </div>
+
+        <div class="card cycle-details">
+          <h3>Estimaciones</h3>
+          <div id="estimateCards" class="mini-grid"></div>
+        </div>
+      </section>
+
+      <section id="pageCalendario" class="page">
+        <div class="section-heading calendar-heading">
+          <div>
+            <p class="eyebrow">CALENDARIO</p>
+            <h2>Vista anual</h2>
+          </div>
+          <div class="year-control">
+            <button id="prevYearBtn" class="icon-btn small">‹</button>
+            <strong id="calendarYear"></strong>
+            <button id="nextYearBtn" class="icon-btn small">›</button>
+          </div>
+        </div>
+        <div class="legend calendar-legend">
+          <span><i class="dot menstrual"></i> Menstruación</span>
+          <span><i class="dot sexdot"></i> Actividad sexual</span>
+          <span><i class="dot note"></i> Nota</span>
+        </div>
+        <div id="yearCalendar" class="year-calendar"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button data-page="Registro" class="active"><span>＋</span><small>Registro</small></button>
+      <button data-page="Ciclo"><span>◌</span><small>Ciclo</small></button>
+      <button data-page="Calendario"><span>▦</span><small>Calendario</small></button>
+    </nav>
+  </div>
+
+  <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card settings-card">
+      <div class="modal-header">
+        <h2>Configuración</h2>
+        <button id="closeSettingsBtn" class="icon-btn">×</button>
+      </div>
+      <div class="settings-section">
+        <h3>Estimaciones del ciclo</h3>
+        <label for="defaultCycleLength">Duración promedio del ciclo</label>
+        <div class="number-row"><input id="defaultCycleLength" type="number" min="20" max="45" /><span>días</span></div>
+        <label for="defaultPeriodLength">Duración promedio de menstruación</label>
+        <div class="number-row"><input id="defaultPeriodLength" type="number" min="1" max="10" /><span>días</span></div>
+        <label for="lutealLength">Duración estimada de fase lútea</label>
+        <div class="number-row"><input id="lutealLength" type="number" min="10" max="17" /><span>días</span></div>
+        <button id="saveSettingsBtn" class="secondary-btn">Guardar configuración</button>
+      </div>
+
+      <div class="settings-section">
+        <h3>Privacidad y respaldo</h3>
+        <button id="exportCsvBtn" class="secondary-btn full">Exportar registros a CSV</button>
+        <p class="small-note">El CSV no está cifrado. Guárdalo solo en una ubicación privada.</p>
+        <button id="downloadBackupBtn" class="secondary-btn full">Descargar respaldo cifrado</button>
+        <label for="restoreBackupInput" class="secondary-btn full file-label">Restaurar respaldo cifrado</label>
+        <input id="restoreBackupInput" class="hidden" type="file" accept="application/json,.json" />
+      </div>
+
+      <div class="settings-section">
+        <button id="lockBtn" class="danger-outline full">Bloquear ahora</button>
+      </div>
+    </div>
+  </div>
+
+  <template id="entryTemplate">
+    <div class="entry-item">
+      <div>
+        <strong class="entry-date"></strong>
+        <p class="entry-summary"></p>
+      </div>
+      <div class="entry-actions">
+        <button class="edit-entry">Editar</button>
+        <button class="delete-entry">Eliminar</button>
+      </div>
+    </div>
+  </template>
+
+  <script src="security.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
